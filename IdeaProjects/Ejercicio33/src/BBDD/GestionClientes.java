@@ -102,4 +102,63 @@ public class GestionClientes {
 
         }
     }
+
+    private static void updateClient(Connection connection, Scanner sc) throws SQLException {
+        System.out.println("Ingresa el ID del cliente a actualizar:");
+        int id = sc.nextInt();
+        sc.nextLine(); // consume the rest of the line
+        System.out.println("¿Qué campo deseas actualizar? (nombre, apellido, edad)");
+        String field = sc.nextLine();
+        String newValue;
+        String updateStatement = "";
+
+        switch (field.toLowerCase()) {
+            case "nombre":
+                System.out.println("Ingresa el nuevo nombre:");
+                newValue = sc.nextLine();
+                updateStatement = "UPDATE cliente SET name = ? WHERE idClient = ?";
+                break;
+            case "apellido":
+                System.out.println("Ingresa el nuevo apellido:");
+                newValue = sc.nextLine();
+                updateStatement = "UPDATE cliente SET surname = ? WHERE idClient = ?";
+                break;
+            case "edad":
+                System.out.println("Ingresa la nueva edad:");
+                newValue = sc.nextLine();
+                updateStatement = "UPDATE cliente SET age = ? WHERE idClient = ?";
+                break;
+            default:
+                System.out.println("Campo no reconocido.");
+                return;
+        }
+
+        PreparedStatement statement = connection.prepareStatement(updateStatement);
+        statement.setString(1, newValue);
+        statement.setInt(2, id);
+        int rowsAffected = statement.executeUpdate();
+        if (rowsAffected > 0) {
+            System.out.println("Cliente actualizado con éxito.");
+        } else {
+            System.out.println("No se encontró el cliente.");
+        }
+        statement.close();
+    }
+
+    private static void deleteClient(Connection connection, Scanner sc) throws SQLException {
+        System.out.println("Ingresa el ID del cliente a eliminar:");
+        int id = sc.nextInt();
+        sc.nextLine(); // consume the rest of the line
+        String deleteStatement = "DELETE FROM cliente WHERE idClient = ?";
+
+        PreparedStatement statement = connection.prepareStatement(deleteStatement);
+        statement.setInt(1, id);
+        int rowsAffected = statement.executeUpdate();
+        if (rowsAffected > 0) {
+            System.out.println("Cliente eliminado con éxito.");
+        } else {
+            System.out.println("No se encontró el cliente.");
+        }
+        statement.close();
+    }
 }
